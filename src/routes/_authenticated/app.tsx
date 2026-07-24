@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { listFriends } from "@/lib/friends.functions";
 import { postWrappedKey, fetchWrappedKey } from "@/lib/keys.functions";
 import { encryptMessage, decryptMessage, parseBlob } from "@/lib/crypto";
@@ -28,6 +29,7 @@ type Friend = {
 
 function Workspace() {
   const [tab, setTab] = useState<"encrypt" | "decrypt">("encrypt");
+  const { t } = useTranslation();
   const listFriendsFn = useServerFn(listFriends);
   const friendsQ = useQuery({
     queryKey: ["friends"],
@@ -44,21 +46,21 @@ function Workspace() {
           onClick={() => setTab("encrypt")}
           className={`flex-1 flex items-center justify-center gap-2 rounded-sm px-3 py-2 ${tab === "encrypt" ? "bg-accent" : ""}`}
         >
-          <Lock className="h-4 w-4" /> Encrypt
+          <Lock className="h-4 w-4" /> {t("app_encrypt")}
         </button>
         <button
           onClick={() => setTab("decrypt")}
           className={`flex-1 flex items-center justify-center gap-2 rounded-sm px-3 py-2 ${tab === "decrypt" ? "bg-accent" : ""}`}
         >
-          <Unlock className="h-4 w-4" /> Decrypt
+          <Unlock className="h-4 w-4" /> {t("app_decrypt")}
         </button>
       </div>
 
       {friendsQ.isLoading ? (
-        <div className="text-sm text-muted-foreground">Loading friends…</div>
+        <div className="text-sm text-muted-foreground">{t("app_loading_friends")}</div>
       ) : accepted.length === 0 ? (
         <div className="rounded-md border border-border bg-card p-6 text-sm text-muted-foreground">
-          You have no accepted friends yet. Head to <span className="text-foreground">Friends</span> to add one by their handle.
+          {t("app_no_friends")}
         </div>
       ) : tab === "encrypt" ? (
         <EncryptPanel friends={accepted} />
@@ -72,6 +74,7 @@ function Workspace() {
 }
 
 function EncryptPanel({ friends }: { friends: Friend[] }) {
+  const { t } = useTranslation();
   const [recipientId, setRecipientId] = useState(friends[0]?.other.id ?? "");
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -90,9 +93,9 @@ function EncryptPanel({ friends }: { friends: Friend[] }) {
     setBusy(true);
     try {
       const recipient = friends.find((f) => f.other.id === recipientId);
-      if (!recipient) throw new Error("Pick a recipient.");
-      if (!recipient.other.public_key) throw new Error("Missing recipient key.");
-      if (!text.trim()) throw new Error("Type a message first.");
+      if (!recipient) throw new Error(t("app_err_pick_recipient"));
+      if (!recipient.other.public_key) throw new Error(t("app_err_missing_key"));
+      if (!text.trim()) throw new Error(t("app_err_type"));
 
       const { blob, wrappedKey, messageId } = await encryptMessage(
         text,
@@ -122,7 +125,7 @@ function EncryptPanel({ friends }: { friends: Friend[] }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Recipient">
+      <Field label={t("app_recipient")}>
         <select
           value={recipientId}
           onChange={(e) => setRecipientId(e.target.value)}
@@ -135,13 +138,13 @@ function EncryptPanel({ friends }: { friends: Friend[] }) {
           ))}
         </select>
       </Field>
-      <Field label="Message">
+      <Field label={t("app_message")}>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={5}
           className="r2p-input"
-          placeholder="Type the message to encrypt…"
+          placeholder={t("app_message_ph")}
         />
       </Field>
       <button
@@ -149,7 +152,7 @@ function EncryptPanel({ friends }: { friends: Friend[] }) {
         disabled={busy}
         className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
       >
-        {busy ? "Encrypting…" : "Encrypt & send key"}
+        {busy ? t("app_encrypting") : t("app_encrypt_btn")}
       </button>
 
       {error && (
@@ -161,13 +164,13 @@ function EncryptPanel({ friends }: { friends: Friend[] }) {
       {output && (
         <div className="rounded-md border border-border bg-card p-4">
           <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
-            <span>Ciphertext — paste this anywhere</span>
+            <span>{t("app_ciphertext")}</span>
             <button
               onClick={copyOut}
               className="flex items-center gap-1 rounded-md border border-border px-2 py-1 hover:bg-accent"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              {copied ? "Copied" : "Copy"}
+              {copied ? t("app_copied") : t("app_copy")}
             </button>
           </div>
           <div className="max-h-60 overflow-auto font-mono text-xs break-all">
@@ -180,6 +183,7 @@ function EncryptPanel({ friends }: { friends: Friend[] }) {
 }
 
 function DecryptPanel({ friends }: { friends: Friend[] }) {
+  const { t } = useTranslation();
   const [senderId, setSenderId] = useState(friends[0]?.other.id ?? "");
   const [blob, setBlob] = useState("");
   const [busy, setBusy] = useState(false);
@@ -200,11 +204,11 @@ function DecryptPanel({ friends }: { friends: Friend[] }) {
       const key = await fetchKey({
         data: { message_id: parsed.mid, sender_id: senderId },
       });
-      if (!key) throw new Error("No key found for this message from that sender.");
+      if (!key) throw new Error(t("app_err_no_key"));
       const { data: udata } = await supabase.auth.getUser();
-      if (!udata.user) throw new Error("Signed out.");
+      if (!udata.user) throw new Error(t("app_err_signed_out"));
       const priv = await loadPrivateKey(udata.user.id);
-      if (!priv) throw new Error("Your private key is missing on this device.");
+      if (!priv) throw new Error(t("app_err_priv_missing"));
       const pt = await decryptMessage(parsed, key.wrapped_key, priv);
       setOutput(pt);
     } catch (err) {
@@ -216,7 +220,7 @@ function DecryptPanel({ friends }: { friends: Friend[] }) {
 
   return (
     <div className="space-y-4">
-      <Field label="Sender">
+      <Field label={t("app_sender")}>
         <select
           value={senderId}
           onChange={(e) => setSenderId(e.target.value)}
@@ -229,13 +233,13 @@ function DecryptPanel({ friends }: { friends: Friend[] }) {
           ))}
         </select>
       </Field>
-      <Field label="Ciphertext blob">
+      <Field label={t("app_ciphertext_input")}>
         <textarea
           value={blob}
           onChange={(e) => setBlob(e.target.value)}
           rows={5}
           className="r2p-input font-mono text-xs"
-          placeholder="Paste the R2P:… blob you received"
+          placeholder={t("app_ciphertext_ph")}
         />
       </Field>
       <button
@@ -243,7 +247,7 @@ function DecryptPanel({ friends }: { friends: Friend[] }) {
         disabled={busy}
         className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
       >
-        {busy ? "Decrypting…" : "Decrypt"}
+        {busy ? t("app_decrypting") : t("app_decrypt_btn")}
       </button>
 
       {error && (
@@ -253,7 +257,7 @@ function DecryptPanel({ friends }: { friends: Friend[] }) {
       )}
       {output && (
         <div className="rounded-md border border-border bg-card p-4">
-          <div className="mb-2 text-xs text-muted-foreground">Plaintext</div>
+          <div className="mb-2 text-xs text-muted-foreground">{t("app_plaintext")}</div>
           <div className="whitespace-pre-wrap text-sm">{output}</div>
         </div>
       )}

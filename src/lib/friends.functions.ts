@@ -12,6 +12,7 @@ export const initProfile = createServerFn({ method: "POST" })
     encrypted_private_key: string;
     pk_salt: string;
     pk_iv: string;
+    language?: string;
   }) =>
     z
       .object({
@@ -20,6 +21,7 @@ export const initProfile = createServerFn({ method: "POST" })
         encrypted_private_key: z.string().min(1).max(8192),
         pk_salt: z.string().min(1).max(128),
         pk_iv: z.string().min(1).max(128),
+        language: z.string().regex(/^[a-z]{2}$/).optional(),
       })
       .parse(d),
   )
@@ -32,6 +34,7 @@ export const initProfile = createServerFn({ method: "POST" })
       encrypted_private_key: data.encrypted_private_key,
       pk_salt: data.pk_salt,
       pk_iv: data.pk_iv,
+      language: data.language ?? "en",
     });
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -43,11 +46,26 @@ export const getMyProfile = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, handle, public_key, encrypted_private_key, pk_salt, pk_iv, created_at")
+      .select("id, handle, public_key, encrypted_private_key, pk_salt, pk_iv, language, created_at")
       .eq("id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     return data;
+  });
+
+export const updateLanguage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { language: string }) =>
+    z.object({ language: z.string().regex(/^[a-z]{2}$/) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ language: data.language })
+      .eq("id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 export const searchByHandle = createServerFn({ method: "POST" })

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import {
   listFriends,
   searchByHandle,
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/_authenticated/friends")({
 });
 
 function FriendsPage() {
+  const { t } = useTranslation();
   const listFn = useServerFn(listFriends);
   const searchFn = useServerFn(searchByHandle);
   const sendFn = useServerFn(sendFriendRequest);
@@ -41,14 +43,14 @@ function FriendsPage() {
     setBusy(true);
     try {
       const clean = handle.trim().toLowerCase();
-      if (!/^[a-zA-Z0-9_]{3,32}$/.test(clean)) throw new Error("Invalid handle.");
+      if (!/^[a-zA-Z0-9_]{3,32}$/.test(clean)) throw new Error(t("friends_err_invalid"));
       const found = await searchFn({ data: { handle: clean } });
-      if (!found) throw new Error("No user with that handle.");
+      if (!found) throw new Error(t("friends_err_no_user"));
       const res = await sendFn({ data: { addressee_id: found.id } });
       setMsg(
         res.autoAccepted
-          ? `You are now friends with @${found.handle}.`
-          : `Request sent to @${found.handle}.`,
+          ? t("friends_now_friends", { handle: found.handle })
+          : t("friends_request_sent", { handle: found.handle }),
       );
       setHandle("");
       qc.invalidateQueries({ queryKey: ["friends"] });
@@ -70,34 +72,34 @@ function FriendsPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-8">
-      <h1 className="text-xl font-semibold">Friends</h1>
+      <h1 className="text-xl font-semibold">{t("friends_title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Add friends by their handle. You need to be accepted friends to exchange encrypted messages.
+        {t("friends_intro")}
       </p>
 
       <form onSubmit={onAdd} className="mt-6 flex gap-2">
         <input
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
-          placeholder="handle (e.g. alice_)"
+          placeholder={t("friends_handle_ph")}
           className="r2p-input flex-1"
         />
         <button
           disabled={busy}
           className="flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
         >
-          <UserPlus className="h-4 w-4" /> Add
+          <UserPlus className="h-4 w-4" /> {t("friends_add")}
         </button>
       </form>
       {msg && <div className="mt-2 text-sm text-muted-foreground">{msg}</div>}
 
-      <Section title="Incoming requests" hint={incoming.length === 0 ? "None." : undefined}>
+      <Section title={t("friends_incoming")} hint={incoming.length === 0 ? t("friends_none") : undefined}>
         {incoming.map((r) => (
           <Row key={r.friendship_id}>
             <span>@{r.other.handle}</span>
             <div className="flex gap-1">
               <IconBtn
-                title="Accept"
+                title={t("app_encrypt_btn").length > 0 ? t("friends_add") : "Accept"}
                 onClick={async () => {
                   await respondFn({
                     data: { friendship_id: r.friendship_id, accept: true },
@@ -108,7 +110,7 @@ function FriendsPage() {
                 <Check className="h-4 w-4" />
               </IconBtn>
               <IconBtn
-                title="Decline"
+                title={t("friends_none")}
                 onClick={async () => {
                   await respondFn({
                     data: { friendship_id: r.friendship_id, accept: false },
@@ -123,12 +125,12 @@ function FriendsPage() {
         ))}
       </Section>
 
-      <Section title="Outgoing requests" hint={outgoing.length === 0 ? "None." : undefined}>
+      <Section title={t("friends_outgoing")} hint={outgoing.length === 0 ? t("friends_none") : undefined}>
         {outgoing.map((r) => (
           <Row key={r.friendship_id}>
-            <span className="text-muted-foreground">@{r.other.handle} · waiting</span>
+            <span className="text-muted-foreground">@{r.other.handle} · {t("friends_waiting")}</span>
             <IconBtn
-              title="Cancel"
+              title={t("friends_none")}
               onClick={async () => {
                 await unfriendFn({ data: { friendship_id: r.friendship_id } });
                 qc.invalidateQueries({ queryKey: ["friends"] });
@@ -140,14 +142,14 @@ function FriendsPage() {
         ))}
       </Section>
 
-      <Section title="Friends" hint={accepted.length === 0 ? "You have no friends yet." : undefined}>
+      <Section title={t("friends_list")} hint={accepted.length === 0 ? t("friends_none_yet") : undefined}>
         {accepted.map((r) => (
           <Row key={r.friendship_id}>
             <span>@{r.other.handle}</span>
             <IconBtn
-              title="Remove"
+              title={t("friends_none")}
               onClick={async () => {
-                if (!confirm(`Unfriend @${r.other.handle}?`)) return;
+                if (!confirm(t("friends_confirm_unfriend", { handle: r.other.handle }))) return;
                 await unfriendFn({ data: { friendship_id: r.friendship_id } });
                 qc.invalidateQueries({ queryKey: ["friends"] });
               }}

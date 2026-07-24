@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { getMyProfile } from "@/lib/friends.functions";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getMyProfile, updateLanguage } from "@/lib/friends.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { loadPrivateKey } from "@/lib/keystore";
+import { useTranslation } from "react-i18next";
+import { LANGUAGES, SUPPORTED_CODES } from "@/i18n/languages";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -17,10 +19,15 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 function SettingsPage() {
+  const { t, i18n } = useTranslation();
   const getProfile = useServerFn(getMyProfile);
+  const setLangFn = useServerFn(updateLanguage);
+  const qc = useQueryClient();
   const q = useQuery({ queryKey: ["profile"], queryFn: () => getProfile() });
   const [email, setEmail] = useState<string | null>(null);
   const [hasLocalKey, setHasLocalKey] = useState<boolean | null>(null);
+  const [savingLng, setSavingLng] = useState<string | null>(null);
+  const [savedLng, setSavedLng] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -33,27 +40,77 @@ function SettingsPage() {
     })();
   }, []);
 
+  async function onChangeLanguage(code: string) {
+    if (!SUPPORTED_CODES.includes(code)) return;
+    setSavingLng(code);
+    setSavedLng(false);
+    try {
+      await setLangFn({ data: { language: code } });
+      await i18n.changeLanguage(code);
+      await qc.invalidateQueries({ queryKey: ["profile"] });
+      setSavedLng(true);
+      setTimeout(() => setSavedLng(false), 1500);
+    } finally {
+      setSavingLng(null);
+    }
+  }
+
+  const currentLng = q.data?.language ?? i18n.language ?? "en";
+
   return (
     <main className="mx-auto max-w-2xl px-6 py-8">
-      <h1 className="text-xl font-semibold">Settings</h1>
+      <h1 className="text-xl font-semibold">{t("settings_title")}</h1>
       <div className="mt-6 space-y-4">
-        <Card title="Account">
-          <Row label="Email">{email ?? "—"}</Row>
-          <Row label="Handle">
+        <Card title={t("settings_account")}>
+          <Row label={t("settings_email")}>{email ?? "—"}</Row>
+          <Row label={t("settings_handle")}>
             {q.data ? <span className="font-mono">@{q.data.handle}</span> : "—"}
           </Row>
         </Card>
-        <Card title="Encryption">
-          <Row label="Private key on this device">
-            {hasLocalKey === null ? "…" : hasLocalKey ? "Present" : "Missing"}
+
+        <Card title={t("settings_language")}>
+          <div className="px-4 py-3">
+            <select
+              value={currentLng}
+              onChange={(e) => onChangeLanguage(e.target.value)}
+              disabled={savingLng !== null}
+              className="w-full rounded-md border border-border bg-input px-3 py-2 text-sm"
+              style={{
+                background: "var(--color-input)",
+                color: "var(--color-foreground)",
+              }}
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.nativeName} — {l.englishName}
+                </option>
+              ))}
+            </select>
+            <div className="mt-2 min-h-[1.25rem] text-xs text-muted-foreground">
+              {savingLng
+                ? t("settings_saving")
+                : savedLng
+                  ? t("settings_saved")
+                  : ""}
+            </div>
+          </div>
+        </Card>
+
+        <Card title={t("settings_encryption")}>
+          <Row label={t("settings_priv_local")}>
+            {hasLocalKey === null
+              ? "…"
+              : hasLocalKey
+                ? t("settings_present")
+                : t("settings_missing")}
           </Row>
-          <Row label="Encrypted backup on server">
-            {q.data?.encrypted_private_key ? "Present" : "Missing"}
+          <Row label={t("settings_backup")}>
+            {q.data?.encrypted_private_key
+              ? t("settings_present")
+              : t("settings_missing")}
           </Row>
           <p className="px-4 pb-4 text-xs text-muted-foreground">
-            Your private key never leaves your device unencrypted. Your password
-            unlocks the backup — if you forget it, past messages cannot be
-            recovered.
+            {t("settings_priv_note")}
           </p>
         </Card>
       </div>

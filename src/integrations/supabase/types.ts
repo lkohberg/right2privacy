@@ -71,6 +71,7 @@ export type Database = {
           encrypted_private_key: string
           handle: string
           id: string
+          language: string
           pk_iv: string
           pk_salt: string
           public_key: string
@@ -80,6 +81,7 @@ export type Database = {
           encrypted_private_key: string
           handle: string
           id: string
+          language?: string
           pk_iv: string
           pk_salt: string
           public_key: string
@@ -89,6 +91,7 @@ export type Database = {
           encrypted_private_key?: string
           handle?: string
           id?: string
+          language?: string
           pk_iv?: string
           pk_salt?: string
           public_key?: string
