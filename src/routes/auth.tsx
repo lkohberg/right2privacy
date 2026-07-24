@@ -14,7 +14,6 @@ import {
 import { savePrivateKey, loadPrivateKey } from "@/lib/keystore";
 import { Lock } from "lucide-react";
 import { SUPPORTED_CODES } from "@/i18n/languages";
-import { i18n as i18nInstance } from "@/i18n";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional().default("signin"),
@@ -29,18 +28,6 @@ export const Route = createFileRoute("/auth")({
         name: "description",
         content: "Sign in or create a Right2Privacy account.",
       },
-      { property: "og:title", content: "Sign in — Right2Privacy" },
-      {
-        property: "og:description",
-        content: "Sign in or create a Right2Privacy account.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Sign in — Right2Privacy" },
-      {
-        name: "twitter:description",
-        content: "Sign in or create a Right2Privacy account.",
-      },
     ],
   }),
   component: AuthPage,
@@ -49,8 +36,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const { mode } = Route.useSearch();
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const i18n = i18nInstance;
+  const { t, i18n } = useTranslation();
   const [tab, setTab] = useState<"signin" | "signup">(mode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

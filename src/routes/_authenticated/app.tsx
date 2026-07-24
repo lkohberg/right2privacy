@@ -15,12 +15,6 @@ export const Route = createFileRoute("/_authenticated/app")({
     meta: [
       { title: "Messages — Right2Privacy" },
       { name: "description", content: "Encrypt and decrypt messages." },
-      { property: "og:title", content: "Messages — Right2Privacy" },
-      { property: "og:description", content: "Encrypt and decrypt messages." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Messages — Right2Privacy" },
-      { name: "twitter:description", content: "Encrypt and decrypt messages." },
     ],
   }),
   component: Workspace,

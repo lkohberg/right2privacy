@@ -7,27 +7,19 @@ import { useEffect, useState } from "react";
 import { loadPrivateKey } from "@/lib/keystore";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES, SUPPORTED_CODES } from "@/i18n/languages";
-import { i18n as i18nInstance } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "Settings — Right2Privacy" },
       { name: "description", content: "Your Right2Privacy account." },
-      { property: "og:title", content: "Settings — Right2Privacy" },
-      { property: "og:description", content: "Your Right2Privacy account." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Settings — Right2Privacy" },
-      { name: "twitter:description", content: "Your Right2Privacy account." },
     ],
   }),
   component: SettingsPage,
 });
 
 function SettingsPage() {
-  const { t } = useTranslation();
-  const i18n = i18nInstance;
+  const { t, i18n } = useTranslation();
   const getProfile = useServerFn(getMyProfile);
   const setLangFn = useServerFn(updateLanguage);
   const qc = useQueryClient();

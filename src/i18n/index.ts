@@ -15,7 +15,6 @@ if (!i18n.isInitialized) {
     supportedLngs: SUPPORTED_CODES,
     interpolation: { escapeValue: false },
     returnEmptyString: false,
-    react: { useSuspense: false },
     // If a key is missing in the active language, i18next normally falls back
     // to `fallbackLng`. If it's ALSO missing there, return a humanised
     // version of the key instead of leaking the raw key to the UI.

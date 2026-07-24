@@ -8,7 +8,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyProfile } from "@/lib/friends.functions";
 import { SUPPORTED_CODES } from "@/i18n/languages";
-import { i18n as i18nInstance } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -23,8 +22,7 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthedLayout() {
   const navigate = useNavigate();
   const { user } = Route.useRouteContext();
-  const { t } = useTranslation();
-  const i18n = i18nInstance;
+  const { t, i18n } = useTranslation();
 
   const getProfile = useServerFn(getMyProfile);
   const profileQ = useQuery({

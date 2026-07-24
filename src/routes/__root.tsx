@@ -94,6 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Right2Privacy" },
       { name: "twitter:description", content: "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger. Privacy is a human right." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2db0af0c-a72f-4578-8978-5fd5a13bf948" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2db0af0c-a72f-4578-8978-5fd5a13bf948" },
     ],
     links: [
       {
