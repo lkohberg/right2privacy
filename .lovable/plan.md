@@ -1,64 +1,44 @@
-# Right2Privacy — Plan
+## Goal
 
-A site where users encrypt messages for friends without trusting the transport (SMS, Discord, etc.). The ciphertext is copy-pasted through any channel; the AES key travels privately through our server, wrapped with the recipient's RSA public key.
+Require users to verify their email before they can use Right2Privacy, and enable password-based account recovery via email.
 
-## Brand
-- Name: **Right2Privacy**, tagline directly below: *"Privacy is a human right."*
-- Clean, trust-forward design (dark, minimal, mono accents for crypto blobs).
+## Behavior
 
-## Core flow (Alice → Bob)
-1. Alice writes plaintext in the composer.
-2. Browser generates a random AES-GCM 256 key, encrypts the message → ciphertext blob.
-3. Alice picks Bob from her friends list. Browser fetches Bob's RSA public key, wraps the AES key with RSA-OAEP, and POSTs the wrapped key + a message-id to the server (tagged for Bob).
-4. Alice copies the ciphertext blob (contains message-id + IV + ciphertext, base64) and pastes it into any messenger.
-5. Bob pastes the blob into Right2Privacy, selects Alice as sender. Browser pulls the wrapped AES key for that message-id, unwraps it with Bob's private key, decrypts → plaintext.
+**Signup**
+- After submitting email + password, Supabase sends a verification link to the user's inbox.
+- The signup screen shows a "Check your email to verify" state instead of signing the user in.
+- No profile / keypair is created yet — creation happens on the user's first successful sign-in after verification (this avoids orphaned rows for abandoned signups and keeps handle selection tied to a real user).
+- If they try to sign in before verifying, they get a clear "Please verify your email" message with a "Resend verification email" button.
 
-## Crypto
-- **RSA-OAEP 2048** (identity keypair per user) + **AES-GCM 256** (per-message).
-- All crypto in-browser via `window.crypto.subtle`.
-- Public key stored plaintext in DB. Private key stored (a) unencrypted in browser `IndexedDB` primary + (b) encrypted with password-derived key (PBKDF2 SHA-256, 250k iter, random salt) on server as backup, so users can restore on a new device by re-entering password.
-- Ciphertext blob format (base64-wrapped JSON): `{ v:1, mid, iv, ct }`. Server never sees plaintext or AES key.
+**Sign in**
+- Standard email + password.
+- On first sign-in after verification, if no profile exists, the existing keypair-generation + handle-picking flow runs (same code as today's signup path, just moved).
 
-## Auth
-- Lovable Cloud, email + password only.
-- On signup: generate RSA keypair client-side, upload public key + password-encrypted private key backup, store private key locally.
-- On login from new device: prompt for password → download encrypted backup → decrypt → save to IndexedDB.
+**Password reset ("Forgot password?")**
+- Link on the sign-in screen → enter email → Supabase sends a reset link.
+- New public route `/reset-password` where the user sets a new password.
+- Clear warning on that screen: resetting the password will **not** recover past encrypted conversations, because the private key is protected by the old password. After reset, the user will get a fresh keypair and needs to re-add friends. (This matches the "Auth-only recovery" choice.)
+- Implementation: on next sign-in after reset, detect that the stored `encrypted_private_key` can no longer be decrypted (wrong password) and offer a "Regenerate keys" action that overwrites `public_key` / `encrypted_private_key` / `pk_iv` / `pk_salt` on the profile and clears pending keys.
 
-## Friends
-- Search by username or account handle.
-- Send friend request → recipient accepts. Only accepted friends appear as recipients/senders.
+**Verification emails**
+- Use Lovable's built-in auth emails (default templates). No custom email domain setup required.
+- Raise the auth email rate limit modestly so bursts of signups/resets don't 429.
 
-## Pages
-- `/` — landing: hero "Right2Privacy / Privacy is a human right.", how-it-works, CTA to sign up.
-- `/auth` — sign in / sign up (with password strength + private-key generation on signup).
-- `/_authenticated/app` — main workspace, tabbed:
-  - **Encrypt**: recipient dropdown (friends), textarea, "Encrypt & copy" button → shows ciphertext blob.
-  - **Decrypt**: sender dropdown, paste-blob textarea, "Decrypt" → shows plaintext.
-- `/_authenticated/friends` — friends list, pending requests, add-by-handle.
-- `/_authenticated/settings` — account handle, restore-key, sign out.
+## Files to change
 
-## Database (Lovable Cloud)
-- `profiles(id uuid pk → auth.users, handle text unique, public_key text, encrypted_private_key text, pk_salt text, pk_iv text, created_at)`
-- `friendships(id, requester_id, addressee_id, status enum('pending','accepted'), created_at, unique(requester_id, addressee_id))`
-- `pending_keys(id, message_id text unique, sender_id, recipient_id, wrapped_key text, created_at)` — recipient reads then deletes their own row.
-- RLS: users read/update own profile, read friends' public profiles (id, handle, public_key) via a `has_friendship` function; friendship rows visible to either party; `pending_keys` insert only if friendship accepted, select/delete only by recipient.
-- Roles table not needed (no admin surface).
+- `src/routes/auth.tsx` — split into three modes: Sign In, Sign Up, Forgot Password. Handle "email not confirmed" error. Move keypair generation + handle selection out of signup and into a "first sign-in, no profile yet" branch. Add "Resend verification".
+- `src/routes/reset-password.tsx` (new, public) — reads Supabase recovery session from URL, calls `supabase.auth.updateUser({ password })`, then redirects to sign-in with a notice.
+- `src/lib/crypto.ts` / profile update path — add a "regenerate keys" helper used when the old password can no longer unlock the stored key.
+- `src/i18n/translations.ts` — add strings for verify-email screen, forgot password, reset password, key-loss warning.
 
-## Security notes
-- Server never sees plaintext, AES key, or user password.
-- Wrapped keys auto-deleted on first successful fetch; TTL cleanup (e.g. 30 days) via scheduled cleanup later.
-- Password reset ⇒ private key backup unrecoverable (documented in UI); user can generate a new keypair, losing access to old messages.
-- Zod validation on every server fn input.
+## Backend
 
-## Tech
-- TanStack Start + createServerFn (with `requireSupabaseAuth`) for all reads/writes.
-- Browser Web Crypto API — no extra deps.
-- Tailwind + shadcn UI already present.
+- Migration: none required for schema (profile row is created lazily on first sign-in, which the current insert policy already allows).
+- Auth config: `disable_signup: false`, `auto_confirm_email: false`, `external_anonymous_users_enabled: false`, `password_hibp_enabled: true`, raise `rate_limit_email_sent` to 100/hour.
+- `supabase.auth.signUp` uses `emailRedirectTo: window.location.origin`.
+- `supabase.auth.resetPasswordForEmail` uses `redirectTo: ${window.location.origin}/reset-password`.
 
-## Build order
-1. Enable Lovable Cloud, migration for schema + RLS + `has_friendship` helper.
-2. Auth pages + signup keypair generation + IndexedDB storage helpers.
-3. Landing page with branding.
-4. Friends UI + server fns (`sendFriendRequest`, `respondFriendRequest`, `listFriends`, `searchUsers`).
-5. Encrypt/Decrypt workspace + server fns (`postWrappedKey`, `fetchWrappedKey`).
-6. Settings + key restore flow.
+## Out of scope
+
+- Custom-branded auth email templates (would need an email domain). Default Lovable auth emails are fine for now; we can brand them later if you want.
+- Recovering old ciphertexts after a password reset — impossible by design without weakening security.
