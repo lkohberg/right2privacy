@@ -25,35 +25,36 @@ export const Route = createFileRoute("/")({
 function Landing() {
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2">
-          <Lock className="h-5 w-5 text-primary" />
-          <span className="font-mono text-sm tracking-tight">Right2Privacy</span>
+      <header className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-6">
+        <div className="flex min-w-0 items-center gap-2">
+          <Lock className="h-5 w-5 shrink-0 text-primary" />
+          <span className="truncate font-mono text-sm tracking-tight">Right2Privacy</span>
         </div>
-        <nav className="flex items-center gap-3 text-sm">
-          <Link to="/auth" className="rounded-md border border-border px-3 py-1.5 hover:bg-accent">
+        <nav className="flex shrink-0 items-center gap-2 text-sm">
+          <Link to="/auth" className="rounded-md border border-border px-2.5 py-1.5 hover:bg-accent sm:px-3">
             Sign in
           </Link>
           <Link
             to="/auth"
             search={{ mode: "signup" as const }}
-            className="rounded-md bg-primary px-3 py-1.5 text-primary-foreground hover:opacity-90"
+            className="rounded-md bg-primary px-2.5 py-1.5 text-primary-foreground hover:opacity-90 sm:px-3"
           >
-            Create account
+            <span className="sm:hidden">Sign up</span>
+            <span className="hidden sm:inline">Create account</span>
           </Link>
         </nav>
       </header>
 
-      <section className="mx-auto max-w-3xl px-6 pt-16 pb-10 text-center">
-        <h1 className="text-5xl font-semibold tracking-tight sm:text-6xl">
+      <section className="mx-auto max-w-3xl px-4 pt-10 pb-8 text-center sm:px-6 sm:pt-16 sm:pb-10">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
           Right<span className="text-primary">2</span>Privacy
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground">Privacy is a human right.</p>
-        <p className="mx-auto mt-8 max-w-xl text-base text-muted-foreground">
+        <p className="mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg">Privacy is a human right.</p>
+        <p className="mx-auto mt-6 max-w-xl text-sm text-muted-foreground sm:mt-8 sm:text-base">
           Encrypt any message in your browser. Paste the ciphertext into Discord, SMS, email — anything. Only the friend
           you chose can decrypt it. We never see the plaintext or your keys.
         </p>
-        <div className="mt-8 flex justify-center gap-3">
+        <div className="mt-6 flex flex-col justify-center gap-2 sm:mt-8 sm:flex-row sm:gap-3">
           <Link
             to="/auth"
             search={{ mode: "signup" as const }}
@@ -67,7 +68,7 @@ function Landing() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-4 px-6 py-16 sm:grid-cols-3">
+      <section className="mx-auto grid max-w-5xl gap-3 px-4 py-8 sm:gap-4 sm:px-6 sm:py-16 sm:grid-cols-3">
         <Step
           icon={<KeyRound className="h-5 w-5 text-primary" />}
           title="1. Add a friend"
@@ -85,8 +86,8 @@ function Landing() {
         />
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 pb-24">
-        <div className="rounded-xl border border-border bg-card p-6">
+      <section className="mx-auto max-w-3xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" /> How the crypto works
           </div>
@@ -99,7 +100,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border">
-        <div className="mx-auto max-w-3xl px-6 py-6 text-center text-xs text-muted-foreground">
+        <div className="mx-auto max-w-3xl px-4 py-5 text-center text-xs text-muted-foreground sm:px-6 sm:py-6">
           <div>Right2Privacy · Privacy is a human right.</div>
           <div className="mt-3 flex justify-center gap-4">
             <Dialog>
@@ -197,10 +198,10 @@ function Landing() {
 
 function Step({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="mb-3">{icon}</div>
-      <div className="font-medium">{title}</div>
-      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+    <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+      <div className="mb-2 sm:mb-3">{icon}</div>
+      <div className="text-sm font-medium sm:text-base">{title}</div>
+      <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{body}</p>
     </div>
   );
 }

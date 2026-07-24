@@ -62,18 +62,20 @@ function AuthedLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
-          <Link to="/app" className="flex items-center gap-2 text-sm font-mono">
-            <Lock className="h-4 w-4 text-primary" /> Right2Privacy
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-3 sm:px-6">
+          <Link to="/app" className="flex min-w-0 items-center gap-2 text-sm font-mono">
+            <Lock className="h-4 w-4 shrink-0 text-primary" />
+            <span className="truncate">Right2Privacy</span>
           </Link>
-          <nav className="flex items-center gap-1 text-sm">
-            <NavLink to="/app" label={t("nav_messages")} />
+          <nav className="flex shrink-0 items-center gap-0.5 text-sm sm:gap-1">
+            <NavLink to="/app" label={t("nav_messages")} icon={<Lock className="h-4 w-4" />} />
             <NavLink to="/friends" label={t("nav_friends")} icon={<Users className="h-4 w-4" />} />
             <NavLink to="/settings" label={t("nav_settings")} icon={<Settings className="h-4 w-4" />} />
             <button
               onClick={signOut}
-              className="flex items-center gap-1 rounded-md px-3 py-1.5 text-muted-foreground hover:bg-accent"
+              className="flex items-center gap-1 rounded-md px-2 py-1.5 text-muted-foreground hover:bg-accent sm:px-3"
               title={t("nav_signout")}
+              aria-label={t("nav_signout")}
             >
               <LogOut className="h-4 w-4" />
             </button>
@@ -97,11 +99,13 @@ function NavLink({
   return (
     <Link
       to={to}
-      className="flex items-center gap-1.5 rounded-md px-3 py-1.5 hover:bg-accent"
-      activeProps={{ className: "flex items-center gap-1.5 rounded-md px-3 py-1.5 bg-accent" }}
+      title={label}
+      aria-label={label}
+      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 hover:bg-accent sm:px-3"
+      activeProps={{ className: "flex items-center gap-1.5 rounded-md px-2 py-1.5 bg-accent sm:px-3" }}
     >
       {icon}
-      {label}
+      <span className="hidden sm:inline">{label}</span>
     </Link>
   );
 }
