@@ -15,6 +15,16 @@ if (!i18n.isInitialized) {
     supportedLngs: SUPPORTED_CODES,
     interpolation: { escapeValue: false },
     returnEmptyString: false,
+    // If a key is missing in the active language, i18next normally falls back
+    // to `fallbackLng`. If it's ALSO missing there, return a humanised
+    // version of the key instead of leaking the raw key to the UI.
+    parseMissingKeyHandler: (key) => {
+      const last = key.split(".").pop() ?? key;
+      return last
+        .replace(/^[a-z]+_/, "")
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+    },
   });
 }
 
