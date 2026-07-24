@@ -68,6 +68,40 @@ export const updateLanguage = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const regenerateKeys = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    public_key: string;
+    encrypted_private_key: string;
+    pk_salt: string;
+    pk_iv: string;
+  }) =>
+    z
+      .object({
+        public_key: z.string().min(1).max(4096),
+        encrypted_private_key: z.string().min(1).max(8192),
+        pk_salt: z.string().min(1).max(128),
+        pk_iv: z.string().min(1).max(128),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        public_key: data.public_key,
+        encrypted_private_key: data.encrypted_private_key,
+        pk_salt: data.pk_salt,
+        pk_iv: data.pk_iv,
+      })
+      .eq("id", userId);
+    if (error) throw new Error(error.message);
+    // Old wrapped keys can no longer be decrypted; clear them.
+    await supabase.from("pending_keys").delete().eq("recipient_id", userId);
+    return { ok: true };
+  });
+
 export const searchByHandle = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { handle: string }) =>
