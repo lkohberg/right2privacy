@@ -17,9 +17,15 @@ export function bufToB64(buf: ArrayBuffer | Uint8Array): string {
 
 export function b64ToBuf(b64: string): Uint8Array {
   const s = atob(b64);
-  const out = new Uint8Array(s.length);
+  const out = new Uint8Array(new ArrayBuffer(s.length));
   for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
   return out;
+}
+
+function rand(n: number): Uint8Array {
+  const buf = new Uint8Array(new ArrayBuffer(n));
+  crypto.getRandomValues(buf);
+  return buf;
 }
 
 // ---------- RSA keypair ----------
@@ -85,8 +91,8 @@ export async function encryptPrivateKeyForBackup(
   password: string,
 ): Promise<{ encrypted_private_key: string; pk_salt: string; pk_iv: string }> {
   const pkcs8 = await exportPrivateKeyRaw(privateKey);
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const salt = rand(16);
+  const iv = rand(12);
   const wrapKey = await deriveWrapKey(password, salt);
   const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, wrapKey, pkcs8);
   return {
@@ -126,7 +132,7 @@ export async function encryptMessage(plaintext: string, recipientPublicKeyB64: s
   messageId: string;
 }> {
   const aesKey = await crypto.subtle.generateKey(AES_ALGO, true, ["encrypt", "decrypt"]);
-  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const iv = rand(12);
   const ct = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     aesKey,
@@ -139,7 +145,7 @@ export async function encryptMessage(plaintext: string, recipientPublicKeyB64: s
     recipientPub,
     rawAes,
   );
-  const messageId = bufToB64(crypto.getRandomValues(new Uint8Array(18)));
+  const messageId = bufToB64(rand(18));
   const blob: CipherBlob = {
     v: 1,
     mid: messageId,
