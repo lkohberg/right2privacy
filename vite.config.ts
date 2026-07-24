@@ -8,38 +8,40 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { loadEnv } from "vite";
 import path from "path";
 
-export default defineConfig(({ mode }) => {
-  // Existing VITE_* env injection for client code (kept unchanged).
-  const env = loadEnv(mode, process.cwd(), "VITE_");
+// Load non-VITE_ env vars (e.g. SUPABASE_SERVICE_ROLE_KEY, LOVABLE_API_KEY) into process.env
+// so server routes can read them. VITE_* vars are still injected for client code by the
+// Lovable TanStack config; we do NOT add server env to `define` to avoid leaking secrets.
+const loadServerEnvPlugin = () => ({
+  name: "load-server-env",
+  config: (_config: unknown, { mode }: { mode: string }) => {
+    const serverEnv = loadEnv(mode, process.cwd(), "");
+    Object.assign(process.env, serverEnv);
+    return {};
+  },
+});
 
-  // Load all env vars into process.env for server routes (e.g. SUPABASE_SERVICE_ROLE_KEY,
-  // LOVABLE_API_KEY). These are NOT added to envDefine so they never leak into the client bundle.
-  const serverEnv = loadEnv(mode, process.cwd(), "");
-  Object.assign(process.env, serverEnv);
-
-  return {
-    tanstackStart: {
-      // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-      // nitro/vite builds from this
-      server: { entry: "server" },
-    },
-    vite: {
-      define: env,
-      resolve: {
-        alias: {
-          // React Email's htmlparser2 needs entities v4.5.0; pin every import path to the
-          // hoisted copy so nested v7+ copies (which removed ./lib/decode.js) are not used.
-          "entities/lib/decode.js": path.resolve(
-            process.cwd(),
-            "node_modules/entities/lib/decode.js",
-          ),
-          "entities/lib/encode.js": path.resolve(
-            process.cwd(),
-            "node_modules/entities/lib/encode.js",
-          ),
-          entities: path.resolve(process.cwd(), "node_modules/entities"),
-        },
+export default defineConfig({
+  tanstackStart: {
+    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
+    // nitro/vite builds from this
+    server: { entry: "server" },
+  },
+  vite: {
+    plugins: [loadServerEnvPlugin()],
+    resolve: {
+      alias: {
+        // React Email's htmlparser2 needs entities v4.5.0; pin every import path to the
+        // hoisted copy so nested v7+ copies (which removed ./lib/decode.js) are not used.
+        "entities/lib/decode.js": path.resolve(
+          process.cwd(),
+          "node_modules/entities/lib/decode.js",
+        ),
+        "entities/lib/encode.js": path.resolve(
+          process.cwd(),
+          "node_modules/entities/lib/encode.js",
+        ),
+        entities: path.resolve(process.cwd(), "node_modules/entities"),
       },
     },
-  };
+  },
 });
