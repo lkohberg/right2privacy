@@ -28,6 +28,8 @@ function SettingsPage() {
   const [hasLocalKey, setHasLocalKey] = useState<boolean | null>(null);
   const [savingLng, setSavingLng] = useState<string | null>(null);
   const [savedLng, setSavedLng] = useState(false);
+  const [langError, setLangError] = useState<string | null>(null);
+  const [selectedLng, setSelectedLng] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -42,20 +44,27 @@ function SettingsPage() {
 
   async function onChangeLanguage(code: string) {
     if (!SUPPORTED_CODES.includes(code)) return;
+    setSelectedLng(code); // optimistic — dropdown reflects choice immediately
     setSavingLng(code);
     setSavedLng(false);
+    setLangError(null);
+    // Change UI language immediately so all strings update while we save.
+    await i18n.changeLanguage(code);
     try {
       await setLangFn({ data: { language: code } });
-      await i18n.changeLanguage(code);
       await qc.invalidateQueries({ queryKey: ["profile"] });
       setSavedLng(true);
       setTimeout(() => setSavedLng(false), 1500);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setLangError(msg);
     } finally {
       setSavingLng(null);
     }
   }
 
-  const currentLng = q.data?.language ?? i18n.language ?? "en";
+  const currentLng =
+    selectedLng ?? q.data?.language ?? i18n.language ?? "en";
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-8">
@@ -93,6 +102,9 @@ function SettingsPage() {
                   ? t("settings_saved")
                   : ""}
             </div>
+            {langError && (
+              <div className="mt-1 text-xs text-destructive">{langError}</div>
+            )}
           </div>
         </Card>
 
