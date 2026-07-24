@@ -68,7 +68,7 @@ function SettingsPage() {
     selectedLng ?? q.data?.language ?? i18n.language ?? "en";
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-8">
+    <main className="mx-auto max-w-2xl px-5 py-8 sm:px-6">
       <h1 className="text-lg font-semibold sm:text-xl">{t("settings_title")}</h1>
       <div className="mt-5 space-y-3 sm:mt-6 sm:space-y-4">
         <Card title={t("settings_account")}>
