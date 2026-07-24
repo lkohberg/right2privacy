@@ -198,10 +198,10 @@ function Landing() {
 
 function Step({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="mb-3">{icon}</div>
-      <div className="font-medium">{title}</div>
-      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+    <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+      <div className="mb-2 sm:mb-3">{icon}</div>
+      <div className="text-sm font-medium sm:text-base">{title}</div>
+      <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{body}</p>
     </div>
   );
 }
