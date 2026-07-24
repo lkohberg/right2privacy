@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Lock, KeyRound, Send, ShieldCheck, Flame, Scale } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -112,16 +113,18 @@ function Landing() {
         <div className="mx-auto max-w-3xl px-6 py-6 text-center text-xs text-muted-foreground">
           <div>Right2Privacy · Privacy is a human right.</div>
           <div className="mt-3 flex justify-center gap-4">
-            <details className="group">
-              <summary className="cursor-pointer list-none underline-offset-4 hover:text-foreground hover:underline">
+            <Dialog>
+              <DialogTrigger className="cursor-pointer underline-offset-4 hover:text-foreground hover:underline">
                 <Flame className="mr-1 inline h-3 w-3" />
                 Motivation
-              </summary>
-              <div className="mx-auto mt-4 max-w-3xl rounded-xl border border-destructive/40 bg-destructive/5 p-6 text-left">
-                <h2 className="text-xl font-semibold tracking-tight text-foreground">
-                  Chat Control is a surveillance regime dressed up as child safety.
-                </h2>
-                <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
+              </DialogTrigger>
+              <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto border-destructive/40 bg-background">
+                <DialogHeader>
+                  <DialogTitle className="text-left text-xl">
+                    Chat Control is a surveillance regime dressed up as child safety.
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 text-left text-sm leading-relaxed text-muted-foreground">
                   <p>
               The European Union — the same institution that lectures the world
               about human rights — is trying to force every messenger on the
@@ -165,15 +168,18 @@ function Landing() {
               you never really wanted it.
             </p>
                 </div>
-              </div>
-            </details>
-            <details className="group">
-              <summary className="cursor-pointer list-none underline-offset-4 hover:text-foreground hover:underline">
+              </DialogContent>
+            </Dialog>
+            <Dialog>
+              <DialogTrigger className="cursor-pointer underline-offset-4 hover:text-foreground hover:underline">
                 <Scale className="mr-1 inline h-3 w-3" />
                 Legal
-              </summary>
-              <div className="mx-auto mt-4 max-w-3xl rounded-xl border border-border bg-card p-6 text-left">
-                <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
+              </DialogTrigger>
+              <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-left">Legal</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 text-left text-xs leading-relaxed text-muted-foreground">
                   <p>
               <span className="font-medium text-foreground">No warranty.</span>{" "}
               Right2Privacy is provided "as is", without warranty of any kind,
@@ -210,8 +216,8 @@ function Landing() {
               Mathematics is speech. Speech is protected — for now.
             </p>
                 </div>
-              </div>
-            </details>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </footer>
