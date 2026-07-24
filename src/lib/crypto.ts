@@ -15,17 +15,18 @@ export function bufToB64(buf: ArrayBuffer | Uint8Array): string {
   return btoa(s);
 }
 
-export function b64ToBuf(b64: string): Uint8Array {
+export function b64ToBuf(b64: string): ArrayBuffer {
   const s = atob(b64);
-  const out = new Uint8Array(new ArrayBuffer(s.length));
-  for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
-  return out;
+  const ab = new ArrayBuffer(s.length);
+  const view = new Uint8Array(ab);
+  for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i);
+  return ab;
 }
 
-function rand(n: number): Uint8Array {
-  const buf = new Uint8Array(new ArrayBuffer(n));
-  crypto.getRandomValues(buf);
-  return buf;
+function rand(n: number): ArrayBuffer {
+  const ab = new ArrayBuffer(n);
+  crypto.getRandomValues(new Uint8Array(ab));
+  return ab;
 }
 
 // ---------- RSA keypair ----------
@@ -59,9 +60,8 @@ export async function exportPrivateKeyRaw(priv: CryptoKey): Promise<ArrayBuffer>
   return crypto.subtle.exportKey("pkcs8", priv);
 }
 
-export async function importPrivateKeyRaw(buf: ArrayBuffer | Uint8Array): Promise<CryptoKey> {
-  const src = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
-  return crypto.subtle.importKey("pkcs8", src, RSA_ALGO, true, [
+export async function importPrivateKeyRaw(buf: ArrayBuffer): Promise<CryptoKey> {
+  return crypto.subtle.importKey("pkcs8", buf, RSA_ALGO, true, [
     "decrypt",
     "unwrapKey",
   ]);
@@ -69,10 +69,10 @@ export async function importPrivateKeyRaw(buf: ArrayBuffer | Uint8Array): Promis
 
 // ---------- password-derived key (for encrypted backup) ----------
 
-async function deriveWrapKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
+async function deriveWrapKey(password: string, salt: ArrayBuffer): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey(
     "raw",
-    new TextEncoder().encode(password),
+    new TextEncoder().encode(password).buffer as ArrayBuffer,
     "PBKDF2",
     false,
     ["deriveKey"],
@@ -136,7 +136,7 @@ export async function encryptMessage(plaintext: string, recipientPublicKeyB64: s
   const ct = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     aesKey,
-    new TextEncoder().encode(plaintext),
+    new TextEncoder().encode(plaintext).buffer as ArrayBuffer,
   );
   const rawAes = await crypto.subtle.exportKey("raw", aesKey);
   const recipientPub = await importPublicKey(recipientPublicKeyB64);
