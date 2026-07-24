@@ -108,16 +108,21 @@ function Landing() {
         </div>
       </section>
 
-      <section id="motivation" className="mx-auto max-w-3xl px-6 pb-24">
-        <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-6">
-          <div className="mb-3 flex items-center gap-2 text-sm font-medium text-destructive">
-            <Flame className="h-4 w-4" /> Motivation
-          </div>
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Chat Control is a surveillance regime dressed up as child safety.
-          </h2>
-          <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
-            <p>
+      <footer className="border-t border-border">
+        <div className="mx-auto max-w-3xl px-6 py-6 text-center text-xs text-muted-foreground">
+          <div>Right2Privacy · Privacy is a human right.</div>
+          <div className="mt-3 flex justify-center gap-4">
+            <details className="group">
+              <summary className="cursor-pointer list-none underline-offset-4 hover:text-foreground hover:underline">
+                <Flame className="mr-1 inline h-3 w-3" />
+                Motivation
+              </summary>
+              <div className="mx-auto mt-4 max-w-3xl rounded-xl border border-destructive/40 bg-destructive/5 p-6 text-left">
+                <h2 className="text-xl font-semibold tracking-tight text-foreground">
+                  Chat Control is a surveillance regime dressed up as child safety.
+                </h2>
+                <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
+                  <p>
               The European Union — the same institution that lectures the world
               about human rights — is trying to force every messenger on the
               continent to scan your private conversations before they are even
@@ -159,17 +164,17 @@ function Landing() {
               for every other freedom you still have left. Defend it, or admit
               you never really wanted it.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="legal" className="mx-auto max-w-3xl px-6 pb-24">
-        <div className="rounded-xl border border-border bg-card p-6">
-          <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-            <Scale className="h-4 w-4 text-primary" /> Legal
-          </div>
-          <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
-            <p>
+                </div>
+              </div>
+            </details>
+            <details className="group">
+              <summary className="cursor-pointer list-none underline-offset-4 hover:text-foreground hover:underline">
+                <Scale className="mr-1 inline h-3 w-3" />
+                Legal
+              </summary>
+              <div className="mx-auto mt-4 max-w-3xl rounded-xl border border-border bg-card p-6 text-left">
+                <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
+                  <p>
               <span className="font-medium text-foreground">No warranty.</span>{" "}
               Right2Privacy is provided "as is", without warranty of any kind,
               express or implied, including but not limited to fitness for a
@@ -204,12 +209,11 @@ function Landing() {
               encryption in any given country. Encryption is mathematics.
               Mathematics is speech. Speech is protected — for now.
             </p>
+                </div>
+              </div>
+            </details>
           </div>
         </div>
-      </section>
-
-      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-        Right2Privacy · Privacy is a human right.
       </footer>
     </main>
   );
