@@ -55,7 +55,7 @@ function Landing() {
         </p>
         <p className="mx-auto mt-8 max-w-xl text-base text-muted-foreground">
           Encrypt any message in your browser. Paste the ciphertext into
-          Discord, SMS, email — anything. Only the friend you chose can
+          Discord, SMS, email, anything. Only the friend you chose can
           decrypt it. We never see the plaintext or your keys.
         </p>
         <div className="mt-8 flex justify-center gap-3">
@@ -101,7 +101,7 @@ function Landing() {
           <p className="text-sm text-muted-foreground">
             RSA-OAEP 2048 identity keys, AES-GCM 256 per-message keys. All
             crypto runs in your browser via the Web Crypto API. Your private
-            key never leaves your device unencrypted — an optional
+            key never leaves your device unencrypted, an optional
             password-encrypted backup is stored so you can restore on another
             device.
           </p>
