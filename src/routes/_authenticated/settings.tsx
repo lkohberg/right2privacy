@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { loadPrivateKey } from "@/lib/keystore";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES, SUPPORTED_CODES } from "@/i18n/languages";
+import { i18n as i18nInstance } from "@/i18n";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -25,7 +26,8 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 function SettingsPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const i18n = i18nInstance;
   const getProfile = useServerFn(getMyProfile);
   const setLangFn = useServerFn(updateLanguage);
   const qc = useQueryClient();
