@@ -35,6 +35,7 @@ export const EmailChangeEmail = ({
     <Preview>Confirm your email change for {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Text style={brand}>Right2Privacy</Text>
         <Heading style={h1}>Confirm your email change</Heading>
         <Text style={text}>
           You requested to change your email address for {siteName} from{' '}
@@ -66,10 +67,11 @@ export default EmailChangeEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '20px 25px' }
+const brand = { color: '#22c55e', fontWeight: 'bold' as const, fontSize: '14px', margin: '0 0 20px' }
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#0f172a',
   margin: '0 0 20px',
 }
 const text = {
@@ -78,11 +80,12 @@ const text = {
   lineHeight: '1.5',
   margin: '0 0 25px',
 }
-const link = { color: 'inherit', textDecoration: 'underline' }
+const link = { color: '#22c55e', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: '#22c55e',
+  color: '#0f172a',
   fontSize: '14px',
+  fontWeight: 'bold' as const,
   borderRadius: '8px',
   padding: '12px 20px',
   textDecoration: 'none',
