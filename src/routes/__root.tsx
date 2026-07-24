@@ -78,20 +78,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Right2Privacy — Privacy is a human right" },
+      { title: "Right2Privacy" },
       {
         name: "description",
         content:
-          "Encrypt messages end-to-end and send them over any messenger. Right2Privacy: privacy is a human right.",
+          "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger. Privacy is a human right.",
       },
       { property: "og:title", content: "Right2Privacy" },
       {
         property: "og:description",
         content:
-          "Encrypt messages end-to-end and send them over any messenger.",
+          "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger. Privacy is a human right.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Right2Privacy" },
+      { name: "twitter:description", content: "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger. Privacy is a human right." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2db0af0c-a72f-4578-8978-5fd5a13bf948" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2db0af0c-a72f-4578-8978-5fd5a13bf948" },
     ],
     links: [
       {

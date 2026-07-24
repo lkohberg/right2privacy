@@ -4,7 +4,7 @@ import { Lock, KeyRound, Send, ShieldCheck } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Right2Privacy — Privacy is a human right" },
+      { title: "Right2Privacy" },
       {
         name: "description",
         content:
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger.",
+          "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger. Privacy is a human right.",
       },
     ],
   }),
