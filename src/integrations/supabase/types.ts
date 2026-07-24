@@ -103,13 +103,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      find_user_by_handle: {
-        Args: { _handle: string }
-        Returns: {
-          handle: string
-          id: string
-        }[]
-      }
       has_friendship: { Args: { _a: string; _b: string }; Returns: boolean }
     }
     Enums: {
