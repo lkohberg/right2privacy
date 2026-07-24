@@ -41,7 +41,7 @@ function Workspace() {
   );
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-8">
+    <main className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-8">
       <div className="mb-6 flex gap-1 rounded-md border border-border p-1 text-sm">
         <button
           onClick={() => setTab("encrypt")}
