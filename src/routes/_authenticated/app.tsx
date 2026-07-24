@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import "@/i18n";
 import { listFriends } from "@/lib/friends.functions";
 import { postWrappedKey, fetchWrappedKey } from "@/lib/keys.functions";
 import { encryptMessage, decryptMessage, parseBlob } from "@/lib/crypto";

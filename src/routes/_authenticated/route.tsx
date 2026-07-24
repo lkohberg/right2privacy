@@ -4,6 +4,7 @@ import { Lock, Users, Settings, LogOut } from "lucide-react";
 import { clearPrivateKey } from "@/lib/keystore";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import "@/i18n";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyProfile } from "@/lib/friends.functions";

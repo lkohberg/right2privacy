@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { useTranslation } from "react-i18next";
+import "@/i18n";
 import { initProfile, getMyProfile } from "@/lib/friends.functions";
 import {
   generateRsaKeypair,
