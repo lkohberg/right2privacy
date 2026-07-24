@@ -12,6 +12,7 @@ if (!i18n.isInitialized) {
     resources,
     lng: "en",
     fallbackLng: "en",
+    initAsync: false,
     supportedLngs: SUPPORTED_CODES,
     interpolation: { escapeValue: false },
     returnEmptyString: false,
