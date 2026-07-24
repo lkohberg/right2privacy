@@ -72,7 +72,7 @@ function FriendsPage() {
   const accepted = rows.filter((r) => r.status === "accepted");
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-8">
+    <main className="mx-auto max-w-2xl px-5 py-8 sm:px-6">
       <h1 className="text-lg font-semibold sm:text-xl">{t("friends_title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {t("friends_intro")}
