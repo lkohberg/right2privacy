@@ -68,9 +68,9 @@ function SettingsPage() {
     selectedLng ?? q.data?.language ?? i18n.language ?? "en";
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-8">
-      <h1 className="text-xl font-semibold">{t("settings_title")}</h1>
-      <div className="mt-6 space-y-4">
+    <main className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-8">
+      <h1 className="text-lg font-semibold sm:text-xl">{t("settings_title")}</h1>
+      <div className="mt-5 space-y-3 sm:mt-6 sm:space-y-4">
         <Card title={t("settings_account")}>
           <Row label={t("settings_email")}>{email ?? "—"}</Row>
           <Row label={t("settings_handle")}>
@@ -150,9 +150,9 @@ function Card({
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span>{children}</span>
+    <div className="flex items-center justify-between gap-3 px-3 py-2.5 text-sm sm:px-4 sm:py-3">
+      <span className="shrink-0 text-muted-foreground">{label}</span>
+      <span className="min-w-0 truncate text-right">{children}</span>
     </div>
   );
 }
