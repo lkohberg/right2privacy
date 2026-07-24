@@ -28,6 +28,18 @@ export const Route = createFileRoute("/auth")({
         name: "description",
         content: "Sign in or create a Right2Privacy account.",
       },
+      { property: "og:title", content: "Sign in — Right2Privacy" },
+      {
+        property: "og:description",
+        content: "Sign in or create a Right2Privacy account.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Sign in — Right2Privacy" },
+      {
+        name: "twitter:description",
+        content: "Sign in or create a Right2Privacy account.",
+      },
     ],
   }),
   component: AuthPage,

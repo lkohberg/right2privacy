@@ -17,6 +17,12 @@ export const Route = createFileRoute("/_authenticated/friends")({
     meta: [
       { title: "Friends — Right2Privacy" },
       { name: "description", content: "Manage your Right2Privacy friends." },
+      { property: "og:title", content: "Friends — Right2Privacy" },
+      { property: "og:description", content: "Manage your Right2Privacy friends." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Friends — Right2Privacy" },
+      { name: "twitter:description", content: "Manage your Right2Privacy friends." },
     ],
   }),
   component: FriendsPage,
