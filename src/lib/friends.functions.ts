@@ -74,14 +74,16 @@ export const searchByHandle = createServerFn({ method: "POST" })
     z.object({ handle: handleSchema }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const { data: rows, error } = await supabase.rpc("find_user_by_handle", {
-      _handle: data.handle.toLowerCase(),
-    });
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: found, error } = await supabaseAdmin
+      .from("profiles")
+      .select("id, handle")
+      .eq("handle", data.handle.toLowerCase())
+      .maybeSingle();
     if (error) throw new Error(error.message);
-    const found = rows?.[0];
     if (!found || found.id === userId) return null;
-    return { id: found.id as string, handle: found.handle as string };
+    return { id: found.id, handle: found.handle };
   });
 
 export const sendFriendRequest = createServerFn({ method: "POST" })
