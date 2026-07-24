@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, Users, Settings, LogOut } from "lucide-react";
 import { clearPrivateKey } from "@/lib/keystore";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -30,12 +30,27 @@ function AuthedLayout() {
     queryFn: () => getProfile(),
   });
 
+  // Sync UI language to the saved profile language ONCE per session load.
+  // After that, the user's active i18n.language wins so an in-app language
+  // switch isn't immediately overwritten by a stale profile refetch.
+  const syncedRef = useRef(false);
   useEffect(() => {
+    if (syncedRef.current) return;
     const lng = profileQ.data?.language;
-    if (lng && SUPPORTED_CODES.includes(lng) && i18n.language !== lng) {
-      void i18n.changeLanguage(lng);
+    if (lng && SUPPORTED_CODES.includes(lng)) {
+      if (i18n.language !== lng) void i18n.changeLanguage(lng);
+      syncedRef.current = true;
     }
   }, [profileQ.data?.language, i18n]);
+
+  useEffect(() => {
+    document.documentElement.lang = i18n.language || "en";
+    const onChange = (l: string) => {
+      document.documentElement.lang = l || "en";
+    };
+    i18n.on("languageChanged", onChange);
+    return () => i18n.off("languageChanged", onChange);
+  }, [i18n]);
 
   async function signOut() {
     if (user?.id) await clearPrivateKey(user.id).catch(() => {});
