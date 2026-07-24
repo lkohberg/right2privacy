@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { loadPrivateKey } from "@/lib/keystore";
 import { useTranslation } from "react-i18next";
+import "@/i18n";
 import { LANGUAGES, SUPPORTED_CODES } from "@/i18n/languages";
 
 export const Route = createFileRoute("/_authenticated/settings")({
