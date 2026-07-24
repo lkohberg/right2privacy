@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Lock, KeyRound, Send, ShieldCheck } from "lucide-react";
+import { Lock, KeyRound, Send, ShieldCheck, Flame, Scale } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -105,6 +105,106 @@ function Landing() {
             password-encrypted backup is stored so you can restore on another
             device.
           </p>
+        </div>
+      </section>
+
+      <section id="motivation" className="mx-auto max-w-3xl px-6 pb-24">
+        <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-6">
+          <div className="mb-3 flex items-center gap-2 text-sm font-medium text-destructive">
+            <Flame className="h-4 w-4" /> Motivation
+          </div>
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Chat Control is a surveillance regime dressed up as child safety.
+          </h2>
+          <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
+            <p>
+              The European Union — the same institution that lectures the world
+              about human rights — is trying to force every messenger on the
+              continent to scan your private conversations before they are even
+              encrypted. They call it "Chat Control." Strip away the PR and it
+              is a mandatory wiretap on 450 million people. Every message,
+              every photo, every voice note, pre-screened by an algorithm that
+              answers to a bureaucrat you never voted for.
+            </p>
+            <p>
+              They wave dead children in your face to sell it, because they
+              know no honest argument survives ten seconds of scrutiny.
+              Mass-scanning does not catch predators — predators already use
+              tools this law cannot touch. It catches <em>you</em>. Your
+              medical photos. Your union chat. Your affair. Your therapy
+              venting. Your jokes taken out of context by a model with a 90%
+              false-positive rate, forwarded to a stranger in an office, and
+              archived forever.
+            </p>
+            <p>
+              A government that demands the right to read every private
+              sentence before it is spoken is not a democracy with a security
+              problem. It is an authoritarian project with a marketing
+              department. The Stasi kept paper files on a third of East
+              Germany and were considered monstrous for it. Brussels wants
+              real-time client-side scanning on everyone, and calls it
+              progress.
+            </p>
+            <p>
+              Right2Privacy exists because we refuse. The math does not care
+              about your directive. AES-GCM does not negotiate with a
+              commissioner. If the "legal" messengers are compromised by
+              decree, we will encrypt on top of them, underneath them, around
+              them — until the wiretap sees nothing but noise. Paste the
+              ciphertext into WhatsApp, into Signal, into a postcard if you
+              have to. Let them scan it. Let them choke on it.
+            </p>
+            <p className="text-foreground">
+              Privacy is not a loophole for criminals. It is the precondition
+              for every other freedom you still have left. Defend it, or admit
+              you never really wanted it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="legal" className="mx-auto max-w-3xl px-6 pb-24">
+        <div className="rounded-xl border border-border bg-card p-6">
+          <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+            <Scale className="h-4 w-4 text-primary" /> Legal
+          </div>
+          <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
+            <p>
+              <span className="font-medium text-foreground">No warranty.</span>{" "}
+              Right2Privacy is provided "as is", without warranty of any kind,
+              express or implied, including but not limited to fitness for a
+              particular purpose, security, or non-infringement. You use it at
+              your own risk.
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Acceptable use.</span>{" "}
+              This service is a tool for private communication between
+              consenting adults. Do not use it to plan, incite, or carry out
+              acts that are illegal in your jurisdiction. We cannot see your
+              messages and we cannot police them; that responsibility is
+              yours.
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Data we hold.</span>{" "}
+              Your email, a handle, your RSA public key, and an
+              encrypted-at-rest backup of your private key that only your
+              password can unlock. Wrapped per-message keys are relayed to the
+              recipient and deleted on first fetch. We never see plaintext,
+              session keys, or your password.
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Your rights (GDPR).</span>{" "}
+              You can export or delete your account data at any time from
+              Settings. Deleting your account destroys your key backup — old
+              messages become permanently unreadable. That is a feature.
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Jurisdiction.</span>{" "}
+              Right2Privacy takes no position on the legality of end-to-end
+              encryption in any given country. Encryption is mathematics.
+              Mathematics is speech. Speech is protected — for now.
+            </p>
+          </div>
         </div>
       </section>
 
