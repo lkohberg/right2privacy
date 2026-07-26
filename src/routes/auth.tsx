@@ -15,6 +15,7 @@ import {
 import { savePrivateKey, loadPrivateKey } from "@/lib/keystore";
 import { Lock } from "lucide-react";
 import { SUPPORTED_CODES } from "@/i18n/languages";
+import { siteUrl } from "@/lib/site";
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -94,7 +95,7 @@ function AuthPage() {
         email,
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: siteUrl("/confirmed"),
           data: { handle: handle.toLowerCase(), language: currentLng },
         },
       });
@@ -209,7 +210,7 @@ function AuthPage() {
     setBusy(true);
     try {
       const { error: rErr } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: siteUrl("/reset-password"),
       });
       if (rErr) throw rErr;
       setResetSent(true);
@@ -228,7 +229,7 @@ function AuthPage() {
       const { error: rErr } = await supabase.auth.resend({
         type: "signup",
         email,
-        options: { emailRedirectTo: window.location.origin },
+        options: { emailRedirectTo: siteUrl("/confirmed") },
       });
       if (rErr) throw rErr;
       setStatus(t("auth_verify_resent"));
