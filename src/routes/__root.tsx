@@ -94,14 +94,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Right2Privacy" },
       { name: "twitter:description", content: "End-to-end encrypt messages in your browser, then send the ciphertext through any messenger. Privacy is a human right." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2db0af0c-a72f-4578-8978-5fd5a13bf948" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/2db0af0c-a72f-4578-8978-5fd5a13bf948" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9a6450e6-0070-4a4a-93d0-f63faa70bb19" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9a6450e6-0070-4a4a-93d0-f63faa70bb19" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,
