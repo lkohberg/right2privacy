@@ -3,7 +3,7 @@
 > End-to-end encryption that rides on top of any messenger.  
 > Privacy is a human right.
 
-**Right2Privacy** is a browser-based, zero-knowledge encryption layer. It lets two people send end-to-end encrypted messages through ordinary channels — SMS, email, Discord, or any other app — without ever giving the plaintext or their keys to a server.
+**Right2Privacy** is a browser-based, zero-knowledge encryption layer. It lets two people send end-to-end encrypted messages through ordinary channels, SMS, email, Discord, or any other app without ever giving the plaintext or their keys to a server.
 
 The project was built as a practical response to the EU's proposed **Chat Control** regulation, which would mandate client-side scanning of private conversations. Instead of accepting mass surveillance as inevitable, Right2Privacy demonstrates that strong, user-controlled cryptography remains possible and accessible.
 
@@ -51,15 +51,14 @@ The goal was not just to ship another encrypted chat app, but to prove that priv
 ## Live site
 
 - **Web:** https://right2privacy.at
-- **Mission statement:** Privacy is a human right, not a feature.
 
 ## Project status
 
-Right2Privacy is live and functional. Core flows (signup, login, email verification, password reset, friendship management, encryption, and decryption) are complete. The codebase is structured for further iteration: real-time messaging, key verification workflows, and mobile polish are natural next steps.
+Right2Privacy is live and functional. Core flows (signup, login, email verification, password reset, friendship management, encryption, and decryption) are complete.
 
 ## License & use
 
-Provided as-is. The source code is mine to share, discuss, and iterate on. If you are hiring and want to talk about how this was built, the trade-offs involved, or where it could go next, I am happy to walk through it.
+Provided as-is. The source code is mine to share, discuss, and iterate on.
 
 ---
 
